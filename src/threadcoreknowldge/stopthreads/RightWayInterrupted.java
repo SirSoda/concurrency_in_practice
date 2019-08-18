@@ -8,7 +8,7 @@ package threadcoreknowldge.stopthreads;
  */
 public class RightWayInterrupted {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -28,5 +28,6 @@ public class RightWayInterrupted {
         System.out.println("Thread 调用 interrupted=" + Thread.interrupted()); // false 作用于主线程
         System.out.println("thread 调用 isInterrupted=" + thread.isInterrupted()); // 由于上面没有清除中断标志 因此此处还是中断状态
 
+        thread.join();
     }
 }
