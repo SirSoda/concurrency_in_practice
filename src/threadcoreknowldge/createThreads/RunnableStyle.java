@@ -8,7 +8,8 @@ package threadcoreknowldge.createThreads;
 public class RunnableStyle implements Runnable {
 
     public static void main(String[] args) {
-        new RunnableStyle().run();
+        Thread thread = new Thread(new RunnableStyle());
+        thread.start();
     }
     @Override
     public void run() {
