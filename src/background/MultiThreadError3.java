@@ -24,11 +24,22 @@ public class MultiThreadError3 {
         return map;
     }
 
+    /**
+     * 用副本的方法解决溢出
+     * mxf
+     * 2019年09月03日21:00:00
+     * @return
+     */
+    public Map getMapImproved() {
+        return new HashMap(map);
+    }
+
     public static void main(String[] args) {
         MultiThreadError3 multiThreadError3 = new MultiThreadError3();
-        Map<String, Object> map = multiThreadError3.getMap();
+//        Map<String, Object> map = multiThreadError3.getMap();
+        Map<String, Object> map = multiThreadError3.getMapImproved();
         System.out.println(map.get("1"));
         map.remove("1");
-        System.out.println(map.get("1"));
+        System.out.println(multiThreadError3.getMapImproved().get("1"));
     }
 }
