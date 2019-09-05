@@ -47,7 +47,7 @@ public class FieldVisibility {
 
     private void change() {
         a = 3;
-        b = a;
+        b = a; // 其实b相当于起到了触发器的作用 由于volatile保证了可见性 且满足happens-before原则 所以上述操作也都可被看到
     }
 
 }
