@@ -13,6 +13,7 @@ public class TransferMoney implements Runnable{
 
     private static Account a = new Account(500);
     private static Account b = new Account(500);
+    private static final Object lock = new Object();
 
     public static void main(String[] args) throws InterruptedException {
         TransferMoney t1 = new TransferMoney();
@@ -42,13 +43,9 @@ public class TransferMoney implements Runnable{
     }
 
     public static void transferMoney(Account from, Account to, int amount) {
-        synchronized (from) {
-//            try {
-//                TimeUnit.SECONDS.sleep(1);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            };
-            synchronized (to) {
+
+        class Helper {
+            public void transfer () {
                 if(from.balance - amount >= 0) {
                     from.balance -= amount;
                     to.balance += amount;
@@ -58,6 +55,45 @@ public class TransferMoney implements Runnable{
                 }
             }
         }
+
+        // 会发生死锁
+//        synchronized (from) {
+//            try {
+//                TimeUnit.SECONDS.sleep(1);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            };
+//            synchronized (to) {
+//
+//            }
+//        }
+
+        // 避免死锁 通过hash值保证获取锁的顺序一致
+        int fromHash = System.identityHashCode(from);
+        int toHash = System.identityHashCode(to);
+
+        if(fromHash > toHash) {
+            synchronized (from) {
+                synchronized (to) {
+                    new Helper().transfer();
+                }
+            }
+        }else if(fromHash < toHash) {
+            synchronized (to) {
+                synchronized (from) {
+                    new Helper().transfer();
+                }
+            }
+        }else {
+            synchronized (lock) {
+                synchronized (from) {
+                    synchronized (to) {
+                        new Helper().transfer();
+                    }
+                }
+            }
+        }
+
     }
 
     public static class Account{
